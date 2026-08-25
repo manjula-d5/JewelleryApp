@@ -75,6 +75,7 @@ import com.silionmodule.TagReadData;
 import com.tool.log.LogD;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -334,7 +335,7 @@ public class MainActivity extends BaseActivity  { // ActionBarActivity
 
 						String epcstr = Functional.bytes_Hexstr(Ti.EpcId);
 						Log.d("MYAPP","epcstr"+epcstr);
-						System.out.println("myAppss"+epcstr);
+						scanTags.add(epcstr);
 						if (epcstr.length() < 24)
 							epcstr = String.format("%-24s", epcstr);
 						Log.d("String","mmmm"+epcstr);
@@ -368,8 +369,7 @@ public class MainActivity extends BaseActivity  { // ActionBarActivity
 						tf.Frequency = trds[i].Frequency();
 
 						String epcstr = trds[i].EPCHexstr();
-						Log.d("myAppp","epcstr");
-						System.out.println("myAppp"+epcstr);
+						scanTags.add(epcstr);
 						if (epcstr.length() < 24)
 							epcstr = String.format("%-24s", epcstr);
 
@@ -387,6 +387,7 @@ public class MainActivity extends BaseActivity  { // ActionBarActivity
 						}
 					}
 				}
+				compareTags();
 			}
 
 			Message msg = new Message();
@@ -531,8 +532,10 @@ public class MainActivity extends BaseActivity  { // ActionBarActivity
 		button_clear = (Button) findViewById(R.id.button_readclear);
 		LvTags = (RecyclerView) findViewById(R.id.LvTags);
 		layoutManager = new LinearLayoutManager(this); // Initialize the LayoutManager
-
 		LvTags.setLayoutManager(layoutManager);
+		
+		adapter3 = new Adapter3(this, foundTags);
+		LvTags.setAdapter(adapter3);
 //		listView = (ListView) findViewById(R.id.listView_epclist);
 		gr_match = (RadioGroup) findViewById(R.id.radioGroup_opmatch);
 
@@ -1157,8 +1160,7 @@ public void displayAlert(String title, String msg) {
 										 */
 
 									}
-
-
+									compareTags();
 								}
 //								compareTags();
 							} catch (ReaderException rex) {
@@ -1671,133 +1673,92 @@ public void displayAlert(String title, String msg) {
 
         }*/
 			// System.out.println("picturemap"+pictureMap);
+			DataFormatter formatter = new DataFormatter();
 			for (int i = 0; i < sheet1.getLastRowNum(); i++) {
 				Row row = sheet1.getRow(i+1);
-				// String identifier = row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().trim();
-				// String identifier = row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().trim();
+				if (row == null) continue;
 
-				// Get the corresponding image for the row
-				// System.out.println("inside picturmap: "+ identifier);
-				String tag = row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().trim();
-				String descp = row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().trim();
-				String size = row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().trim();
-				String purity = row.getCell(3, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().trim();
-				String weight = row.getCell(4, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().trim();
-				String views = row.getCell(5, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().trim();
-				String info=row.getCell(6,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().trim();
-				// Create a new instance for each row
-				String imageUrl = row.getCell(7, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().trim();
+				String tag = formatter.formatCellValue(row.getCell(0)).trim();
+				String descp = formatter.formatCellValue(row.getCell(1)).trim();
+				String size = formatter.formatCellValue(row.getCell(2)).trim();
+				String purity = formatter.formatCellValue(row.getCell(3)).trim();
+				String weight = formatter.formatCellValue(row.getCell(4)).trim();
+				String views = formatter.formatCellValue(row.getCell(5)).trim();
+				String info = formatter.formatCellValue(row.getCell(6)).trim();
+				String imageUrl = formatter.formatCellValue(row.getCell(7)).trim();
 
-              /*  PictureData pict = pictures.get(i);
+				if (tag.isEmpty()) continue;
 
-                String ext = pict.suggestFileExtension();
-                byte[] data = pict.getData();*/
+				ReadExcelModel readExcelModel = new ReadExcelModel();
+				readExcelModel.setTagname(tag);
+				readExcelModel.setDescp(descp);
+				readExcelModel.setPrice(size);
+				readExcelModel.setPricePerGram(purity);
+				readExcelModel.setWeight(weight);
+				readExcelModel.setViews(views);
+				readExcelModel.setInfo(info);
+				readExcelModel.setImageUrl(imageUrl);
 
-				if (imageUrl.endsWith(".jpg") || imageUrl.endsWith(".png")) {
-					ReadExcelModel readExcelModel = new ReadExcelModel();
-
-					readExcelModel.setTagname(tag);
-					readExcelModel.setDescp(descp);
-					readExcelModel.setPrice(size);
-					readExcelModel.setPricePerGram(purity);
-					readExcelModel.setWeight(weight);
-					readExcelModel.setViews(views);
-					// readExcelModel.setExtension(ext);
-					readExcelModel.setInfo(info);
-					readExcelModel.setImageUrl(imageUrl);
-					//System.out.println("ext" + ext);
-					//readExcelModel.setData(data);
-					//System.out.println(data);
-               /* if (ext.equals("jpeg")) {
-                    System.out.println("successs");
-                    // Convert byte array to Bitmap
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                    System.out.println("bitmap: " + bitmap);
-                    // imageView.setImageBitmap(bitmap);
-
-                    // ... rest of your code ...
-                }*/
-
-					readExcelModels.add(readExcelModel);
-
-				}
-
-				System.out.println("Row"+i+"data: "+ readExcelModels.toString());
-           /* Log.d("row", tag + "-" + descp);
-
-            excelTags.add(tag + "                " + descp);
-            productnames.add(descp);
-            matchkeyvalueexcel.put(tag, descp);
-
-            Log.d("mi", String.valueOf(matchkeyvalueexcel.keySet()));
-            Log.d("in excel tags", excelTags.toString());*/
+				readExcelModels.add(readExcelModel);
+				
+				Log.d("RFID_EXCEL", "Row " + i + " loaded tag: " + tag);
 			}
-			System.out.println("in excel: "+readExcelModels.toString());
-			System.out.println("size of excel"+readExcelModels.size());
+			Log.d("RFID_EXCEL", "Total models loaded: " + readExcelModels.size());
 		} catch (Exception ex) {
+			Log.e("RFID_EXCEL", "Error loading Excel", ex);
 			Toast.makeText(this, "ReadExcelFile Error: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
-			ex.printStackTrace();
 		}
-//		compareTags();
 	}
 
 	public void compareTags() {
-		List<ReadExcelModel> foundTags = new ArrayList<>();
-		List<String> scanned = new ArrayList<>(scanTags);
+		List<ReadExcelModel> localFoundTags = new ArrayList<>();
+		List<String> scannedLocal = new ArrayList<>(scanTags);
 
-		for (ReadExcelModel model : readExcelModels) {
-			for (String EPC : scanned) {
-				if (EPC.equals(model.getTagname())) {
-					foundTags.add(model);
-					break; // Once we find a match, we can break out of the inner loop
+		if (readExcelModels.isEmpty()) {
+			Log.e("RFID_COMPARE", "Search failed: readExcelModels is EMPTY. Please import Excel first.");
+			return;
+		}
+
+		Log.d("RFID_COMPARE", "Searching for matches: ScannedCount=" + scannedLocal.size() + ", ExcelCount=" + readExcelModels.size());
+
+		for (String epc : scannedLocal) {
+			String cleanEPC = epc != null ? epc.trim() : "";
+			if (cleanEPC.isEmpty()) continue;
+			
+			boolean matched = false;
+			for (ReadExcelModel model : readExcelModels) {
+				String modelTag = model.getTagname() != null ? model.getTagname().trim() : "";
+				if (cleanEPC.equalsIgnoreCase(modelTag)) {
+					Log.d("RFID_COMPARE", "!!! MATCH FOUND !!! Scanned[" + cleanEPC + "] == Excel[" + modelTag + "]");
+					if (!localFoundTags.contains(model)) {
+						localFoundTags.add(model);
+					}
+					matched = true;
+					break;
 				}
+			}
+			if (!matched) {
+				Log.w("RFID_COMPARE", "MISSING IN EXCEL: Scanned tag [" + cleanEPC + "] not found in Excel sheet.");
 			}
 		}
 
-		if (foundTags.size() == 1) {
-			runOnUiThread(() -> setupRecyclerViewForSingleTag(foundTags));
-		} else if (foundTags.size() == 2) {
-			runOnUiThread(() -> setupRecyclerViewForDoubleTags(foundTags));
-		} else if (foundTags.size() >= 3) {
-			runOnUiThread(() -> setupRecyclerViewForMultipleTags(foundTags));
-		}
+		Log.d("RFID_COMPARE", "Final matched count: " + localFoundTags.size());
 
-		// Clear the scanned list and notify the adapter
-		scanned.clear();
-		//scanTags.clear();
-		//foundTags.clear();
-		//foundAll.clear();
-
-	}
-
-	private void setupRecyclerViewForSingleTag(List<ReadExcelModel> foundTags) {
-		Adapter3 adapter3 = new Adapter3(this, foundTags);
-		LvTags.setLayoutManager(layoutManager);
-		LvTags.setAdapter(adapter3);
-		adapter3.notifyDataSetChanged();
-		if(foundTags.size()>0){
-			claimDiscountButton.setVisibility(View.VISIBLE);
-		}
-	}
-
-	private void setupRecyclerViewForDoubleTags(List<ReadExcelModel> foundTags) {
-		Adapter adapter = new Adapter(this, foundTags);
-		LvTags.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
-		LvTags.setAdapter(adapter);
-		adapter.notifyDataSetChanged();
-		if(foundTags.size()>0){
-			claimDiscountButton.setVisibility(View.VISIBLE);
-		}
-	}
-
-	private void setupRecyclerViewForMultipleTags(List<ReadExcelModel> foundTags) {
-		Adapter2 adapter2 = new Adapter2(this, foundTags);
-		LvTags.setLayoutManager(layoutManager);
-		LvTags.setAdapter(adapter2);
-		adapter2.notifyDataSetChanged();
-		if(foundTags.size()>0){
-			claimDiscountButton.setVisibility(View.VISIBLE);
-		}
+		runOnUiThread(() -> {
+			foundTags.clear();
+			foundTags.addAll(localFoundTags);
+			
+			if (adapter3 == null) {
+				adapter3 = new Adapter3(this, foundTags);
+				LvTags.setAdapter(adapter3);
+			} else {
+				adapter3.notifyDataSetChanged();
+			}
+			
+			if (!foundTags.isEmpty()) {
+				claimDiscountButton.setVisibility(View.VISIBLE);
+			}
+		});
 	}
 
 
