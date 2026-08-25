@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="255dp"
+    android:layout_height="625dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_gravity="center_vertical"
+    android:layout_marginLeft="30dp"
+
+  >
+
+    <!-- Brand Name -->
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="255dp"
+        android:layout_height="615dp"
+        android:background="@drawable/card_holder_heighlighter"
+        android:elevation="4dp"
+        android:radius="10dp"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="615dp"
+            android:orientation="vertical"
+            android:background="@drawable/rectangle_bg"
+            android:padding="10dp">
+    <TextView
+        android:id="@+id/descp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Brand Name"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/red4" />
+    <!-- Image -->
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+
+        android:layout_marginTop="20dp"
+       />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/red4" />
+    <TextView
+        android:id="@+id/info"
+        android:hint="XYZ"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+     android:textSize="14sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <!-- Size and Gold Weight -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:id="@+id/size"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:hint="Size"
+
+                    android:textSize="14sp"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/weight"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:hint="Gold Weight"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/purity"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:layout_weight="1"
+                    android:hint="Gold Purity"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/black" />
+            </LinearLayout>
+
+    <!-- Gold Purity and Other Information -->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+       >
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/diamond"
+            android:layout_centerVertical="true"
+            android:id="@+id/diamondImage" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Purity Guaranted"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:layout_toEndOf="@id/diamondImage"
+            android:layout_marginTop="5dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="5dp" />
+
+    </RelativeLayout>
+
+    <!-- Additional Text -->
+    <TextView
+        android:id="@+id/view"
+        android:background="@drawable/rectangle_bg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Additional Text"
+        android:textSize="12sp"
+        android:layout_gravity="center"
+        android:textColor="@android:color/black"
+        android:layout_marginTop="5dp"
+         />
+            <Button
+                android:id="@+id/claimDiscountButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Claim Discount"
+                android:layout_gravity="center_horizontal"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/view"
+                android:onClick="startCountdown" />
+
+            <!-- Countdown Timer (to the right of the button) -->
+            <TextView
+                android:id="@+id/countdownTimer"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/claimDiscountButton"
+                android:layout_alignTop="@id/claimDiscountButton"
+                android:text=""
+                android:layout_gravity="center"
+                android:textSize="24sp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>
