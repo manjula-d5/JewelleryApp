@@ -211,12 +211,20 @@ public class Sub1TabActivity extends Activity {
 		
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN}, 1001);
+                requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.ACCESS_FINE_LOCATION}, 1001);
             } else {
                 myapp.CommBth = new Comm_Bluetooth(this);
             }
         } else {
-            myapp.CommBth = new Comm_Bluetooth(this);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1001);
+                } else {
+                    myapp.CommBth = new Comm_Bluetooth(this);
+                }
+            } else {
+                myapp.CommBth = new Comm_Bluetooth(this);
+            }
         }
         
 		myapp.Mact=this;
@@ -307,15 +315,15 @@ public class Sub1TabActivity extends Activity {
 		button_reset = (Button) this.findViewById(R.id.button_reset);
 
 		String classsearch = myapp.spf.GetString("CLASSSEARCH");
-		if(classsearch!=null&&classsearch.equals("1"))
-			cb_blue.setChecked(true);
-		else
+		if(classsearch!=null&&classsearch.equals("0"))
 			cb_blue.setChecked(false);
-		String blesearch = myapp.spf.GetString("BLESEARCH");
-		if(blesearch!=null&&blesearch.equals("1"))
-			cb_ble.setChecked(true);
 		else
+			cb_blue.setChecked(true);
+		String blesearch = myapp.spf.GetString("BLESEARCH");
+		if(blesearch!=null&&blesearch.equals("0"))
 			cb_ble.setChecked(false);
+		else
+			cb_ble.setChecked(true);
 
 		String modulestr = myapp.spf.GetString("MODULE");
 		String conwaystr = myapp.spf.GetString("CONWAY");
@@ -783,25 +791,19 @@ public class Sub1TabActivity extends Activity {
         );
 
         if (requestCode == 1001) {
+            boolean granted = true;
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    granted = false;
+                    break;
+                }
+            }
 
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+            if (grantResults.length > 0 && granted) {
                 myapp.CommBth = new Comm_Bluetooth(this);
-
-                Toast.makeText(
-                        this,
-                        "Bluetooth permission granted",
-                        Toast.LENGTH_SHORT
-                ).show();
-
+                Toast.makeText(this, "Permissions granted", Toast.LENGTH_SHORT).show();
             } else {
-
-                Toast.makeText(
-                        this,
-                        "Bluetooth permission denied",
-                        Toast.LENGTH_LONG
-                ).show();
+                Toast.makeText(this, "Bluetooth/Location permissions are required for scanning", Toast.LENGTH_LONG).show();
             }
         }
     }
